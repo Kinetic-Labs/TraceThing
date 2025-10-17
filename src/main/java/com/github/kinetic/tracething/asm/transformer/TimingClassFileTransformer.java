@@ -15,10 +15,12 @@ public class TimingClassFileTransformer implements ClassFileTransformer {
 
         if(!className.startsWith("com/github/kinetic/tracething") ||
                 className.contains("tracething/TraceThingAgent") ||
-                className.contains("tracething/Timing") ||
-                className.contains("tracething/dto/ProfilingData")) {
+                className.contains("tracething/dto/ProfilingData") ||
+                className.contains("tracething/util/HtmlReportGenerator")) {
 
             return classfileBuffer;
+        } else {
+            System.out.println("transforming " + className);
         }
 
         try {
