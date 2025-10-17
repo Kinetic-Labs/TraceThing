@@ -13,9 +13,11 @@ public record Resource(String domain, String path) {
      * @return the contents of resource as string
      */
     public String read() {
-        final String resourcePath = domain + path;
+        final String resourcePath = domain + "/" + path;
         final InputStream in = getClass().getClassLoader().getResourceAsStream(resourcePath);
         final byte[] content;
+
+        System.out.println(resourcePath);
 
         try(in) {
             assert in != null;
