@@ -17,8 +17,6 @@ public record Resource(String domain, String path) {
         final InputStream in = getClass().getClassLoader().getResourceAsStream(resourcePath);
         final byte[] content;
 
-        System.out.println(resourcePath);
-
         try(in) {
             assert in != null;
 
