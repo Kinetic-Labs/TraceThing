@@ -1,5 +1,8 @@
 package com.github.kinetic.tracething;
 
+/**
+ * Demo class for testing TraceThing
+ */
 public class Main {
 
     public static void main(String[] ignoredArgs) throws InterruptedException {

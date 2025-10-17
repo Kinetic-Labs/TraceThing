@@ -4,56 +4,57 @@ import com.github.kinetic.tracething.dto.ProfilingData;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Class to generate an HTML report from profiling data
+ */
 @SuppressWarnings("CallToPrintStackTrace")
-public class HtmlReportGenerator {
+public final class HtmlReportGenerator {
 
-    public static void generateReport() {
+    public void generateReport() {
         try {
-            String template = loadResource("/report-template.html");
-            String styles = loadResource("/report-style.css");
-            String tableRows = generateTableRows();
+            final String template = new Resource("web", "report-template.html").read();
+            final String styles = new Resource("web", "report-style.css").read();
+            final String tableRows = generateTableRows();
 
-            String reportContent = template
+            assert template != null;
+            assert styles != null;
+
+            final String reportContent = template
                     .replace("${title}", "TraceThing")
                     .replace("${heading}", "TraceThing")
                     .replace("${styles}", styles)
                     .replace("${table_rows}", tableRows);
 
-            try(PrintWriter writer = new PrintWriter(new FileWriter("profiling-report.html"))) {
+            try(final PrintWriter writer = new PrintWriter(new FileWriter("profiling-report.html"))) {
                 writer.println(reportContent);
             }
-        } catch(IOException ioException) {
+        } catch(final IOException ioException) {
             ioException.printStackTrace();
         }
     }
 
-    private static String generateTableRows() {
+    /**
+     * Generate a table row for each method invocation
+     *
+     * @return the table rows
+     */
+    private String generateTableRows() {
         return ProfilingData.getMethodStats().entrySet().stream()
                 .sorted(Map.Entry.comparingByValue(Comparator.comparingLong(ProfilingData.MethodStats::getTotalDuration).reversed()))
                 .map(entry -> {
-                    String method = entry.getKey();
-                    ProfilingData.MethodStats stats = entry.getValue();
-                    double totalTimeMs = stats.getTotalDuration() / 1_000_000.0;
-                    double avgTimeMs = totalTimeMs / stats.getCount();
+                    final String method = entry.getKey();
+                    final ProfilingData.MethodStats stats = entry.getValue();
+                    final double totalTimeMs = stats.getTotalDuration() / 1_000_000.0;
+                    final double avgTimeMs = totalTimeMs / stats.getCount();
+
                     return String.format("<tr><td>%s</td><td>%d</td><td>%.3f</td><td>%.3f</td></tr>",
                             method, stats.getCount(), totalTimeMs, avgTimeMs);
                 })
                 .collect(Collectors.joining("\n"));
-    }
-
-    private static String loadResource(String path) throws IOException {
-        try(InputStream inputStream = HtmlReportGenerator.class.getResourceAsStream(path)) {
-            if(inputStream == null)
-                throw new IOException("Resource not found: " + path);
-
-            return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
-        }
     }
 }
