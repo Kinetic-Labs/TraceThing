@@ -35,7 +35,7 @@ tasks.shadowJar {
 
     manifest {
         attributes(
-            "Premain-Class" to "com.github.kinetic.tracething.SimpleProfilerAgent",
+            "Premain-Class" to "com.github.kinetic.tracething.TraceThingAgent",
             "Main-Class" to "com.github.kinetic.tracething.Main",
             "Can-Redefine-Classes" to true,
             "Can-Retransform-Classes" to true
