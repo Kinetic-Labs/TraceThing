@@ -19,15 +19,18 @@ public final class HtmlReportGenerator {
         try {
             final String template = new Resource("web", "report-template.html").read();
             final String styles = new Resource("web", "report-style.css").read();
+            final String script = new Resource("web", "report-script.js").read();
             final String tableRows = generateTableRows();
 
             assert template != null;
             assert styles != null;
+            assert script != null;
 
             final String reportContent = template
                     .replace("${title}", "TraceThing")
                     .replace("${heading}", "TraceThing")
                     .replace("${styles}", styles)
+                    .replace("${script}", script)
                     .replace("${table_rows}", tableRows);
 
             try(final PrintWriter writer = new PrintWriter(new FileWriter("profiling-report.html"))) {

@@ -33,6 +33,8 @@ tasks.shadowJar {
     archiveClassifier.set("")
     archiveVersion.set("1.0-SNAPSHOT")
 
+    relocate("org.objectweb.asm", "com.github.kinetic.tracething.libs.asm")
+
     manifest {
         attributes(
             "Premain-Class" to "com.github.kinetic.tracething.TraceThingAgent",

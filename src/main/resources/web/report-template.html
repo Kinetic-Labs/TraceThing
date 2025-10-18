@@ -2,13 +2,19 @@
 <html lang="en">
 <head>
     <title>${title}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
         ${styles}
     </style>
 </head>
-<body>
+<body class="dark-mode">
     <h1>${heading}</h1>
-    <table>
+    <div class="controls">
+        <label for="filter-input"></label><input type="text" id="filter-input" onkeyup="filterTable()" placeholder="Filter by method name...">
+    </div>
+    <table id="report-table">
         <thead>
             <tr>
                 <th>Method</th>
@@ -21,5 +27,8 @@
             ${table_rows}
         </tbody>
     </table>
+    <script>
+        ${script}
+    </script>
 </body>
 </html>

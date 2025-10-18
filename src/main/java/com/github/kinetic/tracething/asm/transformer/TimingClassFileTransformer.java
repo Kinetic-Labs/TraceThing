@@ -33,13 +33,16 @@ public final class TimingClassFileTransformer implements ClassFileTransformer {
                             final ProtectionDomain protectionDomain, final byte[] classfileBuffer) {
 
         // skip internal classes
-        if(!className.startsWith("com/github/kinetic/tracething") ||
+        if(
+                className.startsWith("com/github/kinetic/tracething") ||
                 className.contains("tracething/TraceThingAgent") ||
                 className.contains("tracething/dto/ProfilingData") ||
-                className.contains("tracething/util/HtmlReportGenerator")) {
-
+                className.contains("tracething/util/HtmlReportGenerator") ||
+                className.startsWith("java") ||
+                className.startsWith("sun") ||
+                className.startsWith("jdk")
+        )
             return classfileBuffer;
-        }
 
         try {
             final ClassReader cr = new ClassReader(classfileBuffer);
@@ -50,7 +53,7 @@ public final class TimingClassFileTransformer implements ClassFileTransformer {
                     final MethodVisitor mv = super.visitMethod(access, name, descriptor, signature, exceptions);
 
                     // read time taken for method
-                    return new TimingMethodVisitor(access, name, descriptor, mv);
+                    return new TimingMethodVisitor(access, className, name, descriptor, mv);
                 }
             };
             cr.accept(cv, ClassReader.EXPAND_FRAMES);

@@ -10,6 +10,11 @@ import org.objectweb.asm.commons.AdviceAdapter;
 public final class TimingMethodVisitor extends AdviceAdapter {
 
     /**
+     * The name of the class being visited
+     */
+    private final String className;
+
+    /**
      * The name of the method being visited
      */
     private final String methodName;
@@ -23,19 +28,22 @@ public final class TimingMethodVisitor extends AdviceAdapter {
      * Constructor
      *
      * @param access     the method's access flags (see {@link Opcodes})
+     * @param className  the name of the class being visited
      * @param name       the method's name
      * @param descriptor the method's descriptor (see {@link org.objectweb.asm.Type Type})
      * @param mv         the method visitor to which this adapter must delegate method calls. May be
      */
     public TimingMethodVisitor(
             final int access,
+            final String className,
             final String name,
             final String descriptor,
             final MethodVisitor mv
     ) {
         super(Opcodes.ASM9, mv, access, name, descriptor);
 
-        this.methodName = name;
+        this.className = className;
+        this.methodName = resolveMethodName(name);
     }
 
     /**
@@ -67,7 +75,7 @@ public final class TimingMethodVisitor extends AdviceAdapter {
         mv.visitVarInsn(LSTORE, durationVar);
 
         // add duration to profiling data
-        mv.visitLdcInsn(methodName);
+        mv.visitLdcInsn(className + "#" + methodName);
         mv.visitVarInsn(LLOAD, durationVar);
         mv.visitMethodInsn(
                 INVOKESTATIC,
@@ -76,5 +84,19 @@ public final class TimingMethodVisitor extends AdviceAdapter {
                 "(Ljava/lang/String;J)V",
                 false
         );
+    }
+
+    /**
+     * Resolve the method name to a more descriptive name
+     *
+     * @param name the method name
+     * @return the resolved method name
+     */
+    private String resolveMethodName(final String name) {
+        return switch (name) {
+            case "<init>" -> "constructor";
+            case "<clinit>" -> "static initializer";
+            default -> name;
+        };
     }
 }

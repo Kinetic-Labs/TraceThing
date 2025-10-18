@@ -14,7 +14,7 @@ public record Resource(String domain, String path) {
      */
     public String read() {
         final String resourcePath = domain + "/" + path;
-        final InputStream in = getClass().getClassLoader().getResourceAsStream(resourcePath);
+        final InputStream in = ClassLoader.getSystemResourceAsStream(resourcePath);
         final byte[] content;
 
         try(in) {
@@ -35,7 +35,7 @@ public record Resource(String domain, String path) {
      */
     public boolean exists() {
         final String resourcePath = domain + path;
-        final InputStream inputStream = getClass().getClassLoader().getResourceAsStream(resourcePath);
+        final InputStream inputStream = ClassLoader.getSystemResourceAsStream(resourcePath);
 
         if(inputStream == null)
             return false;
@@ -56,7 +56,7 @@ public record Resource(String domain, String path) {
      */
     public byte[] readBytes() {
         final String resourcePath = domain + path;
-        final InputStream in = getClass().getClassLoader().getResourceAsStream(resourcePath);
+        final InputStream in = ClassLoader.getSystemResourceAsStream(resourcePath);
 
         try(in) {
             assert in != null;
