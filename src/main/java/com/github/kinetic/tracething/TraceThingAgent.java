@@ -13,8 +13,13 @@ import java.util.jar.JarFile;
 @SuppressWarnings("CallToPrintStackTrace")
 public final class TraceThingAgent {
 
+    private static final String MAGENTA = "\033[35m";
+    private static final String RESET = "\033[0m";
+
     public static void premain(String agentArgs, Instrumentation inst) {
-        System.out.println("Starting TraceThing...");
+        final String asciiArt = getAsciiArt();
+
+        System.out.println(asciiArt);
 
         // add agent to the bootstrap class loader
         try {
@@ -39,9 +44,29 @@ public final class TraceThingAgent {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             final HtmlReportGenerator htmlReportGenerator = new HtmlReportGenerator();
 
-            System.out.println("Generating your profiling report...");
+            System.out.println(MAGENTA + "TT :: Generating your profiling report..." + RESET);
 
             htmlReportGenerator.generateReport();
         }));
+    }
+
+    private static String getAsciiArt() {
+        return MAGENTA + """
+                         TraceThing
+                        ,----,       ,----,
+                      ,/   .`|     ,/   .`|
+                    ,`   .'  :   ,`   .'  :
+                  ;    ;     / ;    ;     /
+                .'___,/    ,'.'___,/    ,'
+                |    :     | |    :     |
+                ;    |.';  ; ;    |.';  ;
+                `----'  |  | `----'  |  |
+                    '   :  ;     '   :  ;
+                    |   |  '     |   |  '
+                    '   :  |     '   :  |
+                    ;   |.'      ;   |.'
+                    '---'        '---'
+                      By Kinetic Labs
+                """ + RESET;
     }
 }
